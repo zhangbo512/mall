@@ -1,5 +1,6 @@
 package com.macro.mall.component;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 @Component
+@Slf4j
 public class PermissionInterceptor implements HandlerInterceptor {
 
 
@@ -32,12 +34,14 @@ public class PermissionInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String url = request.getRequestURI();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
+        if(authentication instanceof UsernamePasswordAuthenticationToken) {
+            usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
+        }
 
-        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("------url-------"+url);
-        System.out.println("handler:"+handler.toString());
-        return false;
+        log.warn("---url---"+request.getRequestURI());
+        return true;
     }
 
     @Override
